@@ -1,31 +1,41 @@
-project "GLFW"
-	kind "StaticLib"
+project "glfw"
+	kind "SharedLib"
 	language "C"
+	staticruntime "off"
 
-	targetdir ( "bin/" .. outputDir .. "/%{proj.name}" )
-	objdir ( "bin-int/" .. outputDir .. "/%{proj.name}" )
+	targetdir ("%{wks.location}/bin/" .. outputDir .. "/%{prj.name}")
+	objdir ("%{wks.location}/bin-int/" .. outputDir .. "/%{prj.name}")
 
-	files
-	{
+	files {
 		"include/GLFW/glfw3.h",
 		"include/GLFW/glfw3native.h",
-		"src/glfw_config.h",
+		"src/internal.h",
+		"src/platform.h",
+		"src/mappings.h",
 		"src/context.c",
 		"src/init.c",
 		"src/input.c",
 		"src/monitor.c",
+		"src/platform.c",
 		"src/vulkan.c",
-		"src/window.c"
-	}
+		"src/window.c",
+		"src/egl_context.c",
+		"src/osmesa_context.c",
+		"src/null_platform.h",
+		"src/null_joystick.h",
+		"src/null_init.c",
+
+		"src/null_monitor.c",
+		"src/null_window.c",
+		"src/null_joystick.c",
+		}
 
 	filter "system:linux"
 		pic "On"
 
 		systemversion "latest"
-		staticruntime "On"
 
-		files
-		{
+		files {
 			"src/x11_init.c",
 			"src/x11_monitor.c",
 			"src/x11_window.c",
@@ -38,21 +48,21 @@ project "GLFW"
 			"src/linux_joystick.c"
 		}
 
-		defines
-		{
+		defines {
 			"_GLFW_X11"
 		}
 
 	filter "system:windows"
 		systemversion "latest"
-		staticruntime "On"
 
-		files
-		{
+		files {
 			"src/win32_init.c",
+			"src/win32_module.c",
 			"src/win32_joystick.c",
 			"src/win32_monitor.c",
+			"src/win32_time.h",
 			"src/win32_time.c",
+			"src/win32_thread.h",
 			"src/win32_thread.c",
 			"src/win32_window.c",
 			"src/wgl_context.c",
@@ -60,10 +70,10 @@ project "GLFW"
 			"src/osmesa_context.c"
 		}
 
-		defines 
-		{ 
+		defines {
 			"_GLFW_WIN32",
-			"_CRT_SECURE_NO_WARNINGS"
+			"_CRT_SECURE_NO_WARNINGS",
+			"_GLFW_BUILD_DLL"
 		}
 
 	filter "configurations:Debug"
